@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Healthcare Translation App</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <!-- Optional: include a favicon to avoid 404 errors -->
+  <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
+</head>
+<body>
+  <!-- Top header -->
+  <header class="app-header">
+    <h1>Healthcare Translation App</h1>
+  </header>
+  
+  <div class="container">
+    <div class="transcripts">
+      <!-- Input Box -->
+      <div class="transcript" id="inputBox">
+        <h2>Original Transcript</h2>
+        <label for="srcLang">Input Language:</label>
+        <select id="srcLang">
+          <option value="en">English</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="zh">Chinese</option>
+          <!-- Add more languages as needed -->
+        </select>
+        <textarea id="originalText" placeholder="Your spoken words will appear here..." readonly></textarea>
+        <button id="toggle-btn">Start Recording</button>
+      </div>
+      
+      <!-- Output Box -->
+      <div class="transcript" id="outputBox">
+        <h2>Translated Transcript</h2>
+        <label for="tgtLang">Output Language:</label>
+        <select id="tgtLang">
+          <option value="es">Spanish</option>
+          <option value="en">English</option>
+          <option value="fr">French</option>
+          <option value="zh">Chinese</option>
+          <!-- Add more languages as needed -->
+        </select>
+        <!-- Display translated text -->
+        <div id="translatedText" class="translated-text" style="min-height: 120px; border: 1px solid #ddd; border-radius: 8px; padding: 12px; background-color: #fafafa;"></div>
+        <button id="speak-btn">Speak</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript at the end of body -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Element selections
+      const toggleBtn = document.getElementById("toggle-btn");
+      const originalTextArea = document.getElementById("originalText");
+      const translatedTextDiv = document.getElementById("translatedText");
+      const speakBtn = document.getElementById("speak-btn");
+      const srcLangSelect = document.getElementById("srcLang");
+      const tgtLangSelect = document.getElementById("tgtLang");
+      const inputBox = document.getElementById("inputBox");
+      const outputBox = document.getElementById("outputBox");
+
+      let translatedTextContent = ""; // Store full translated text
+      let mediaRecorder;
+      let audioChunks = [];
+      let isRecording = false;
+
+      // Set up audio recording using MediaRecorder if available
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+          .then(stream => {
+            mediaRecorder = new MediaRecorder(stream);
+            
+            mediaRecorder.ondataavailable = event => {
+              audioChunks.push(event.data);
+            };
+            
+            mediaRecorder.onstop = async () => {
+              const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+              audioChunks = []; // Reset for the next recording
+              const formData = new FormData();
+              formData.append('file', audioBlob, 'audio.wav');
+
+              // Get the selected source language from the dropdown
+              const lang = srcLangSelect.value;
+
+              try {
+                const response = await fetch(`/transcribe?lang=${lang}`, {
+                  method: "POST",
+                  body: formData,
+                });
+                const data = await response.json();
+                // Update the original text area with the transcription from Whisper
+                originalTextArea.value = data.transcription;
+                // Automatically translate the transcribed text
+                translateText(data.transcription);
+              } catch (error) {
+                console.error("Transcription error:", error);
+              }
+            };
+          })
+          .catch(error => console.error("getUserMedia error:", error));
+      } else {
+        alert("Your browser does not support the MediaDevices API. Please use a modern browser with a secure (HTTPS or localhost) context.");
+      }
+
+      // Toggle recording on button click
+      toggleBtn.addEventListener("click", () => {
+        if (mediaRecorder.state === "inactive") {
+          // Clear previous texts
+          originalTextArea.value = "";
+          translatedTextDiv.innerHTML = "";
+          translatedTextContent = "";
+          mediaRecorder.start();
+          isRecording = true;
+          toggleBtn.textContent = "Stop Recording";
+          inputBox.classList.add("recording");
+          // Disable the button briefly to prevent rapid clicks
+          toggleBtn.disabled = true;
+          setTimeout(() => { toggleBtn.disabled = false; }, 500);
+        } else if (mediaRecorder.state === "recording") {
+          mediaRecorder.stop();
+          isRecording = false;
+          toggleBtn.textContent = "Start Recording";
+          inputBox.classList.remove("recording");
+        }
+      });
+
+      // Render the translated text into spans for display (word-highlighting removed)
+      function renderTranslatedText(text) {
+        translatedTextDiv.textContent = text;
+      }
+
+      // Translate text function (calls your translation API endpoint)
+      async function translateText(text) {
+        const srcLang = srcLangSelect.value;
+        const tgtLang = tgtLangSelect.value;
+        try {
+          const response = await fetch("/translate", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              text: text,
+              src_lang: srcLang,
+              tgt_lang: tgtLang,
+            }),
+          });
+          const data = await response.json();
+          translatedTextContent = data.translated_text;
+          renderTranslatedText(translatedTextContent);
+        } catch (error) {
+          console.error("Translation error:", error);
+        }
+      }
+
+      // New text-to-speech using the GenAI endpoint
+      speakBtn.addEventListener("click", async () => {
+        if (!translatedTextContent) return;
+        outputBox.classList.add("speaking");
+        try {
+          const response = await fetch('/synthesize', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              text: translatedTextContent,
+              language: tgtLangSelect.value  // changed key from 'tgt_lang' to 'language'
+            })
+          });
+          const audioBlob = await response.blob();
+          const audioUrl = URL.createObjectURL(audioBlob);
+          const audio = new Audio(audioUrl);
+          audio.onended = () => {
+            outputBox.classList.remove("speaking");
+          };
+          audio.play();
+        } catch (error) {
+          console.error("Synthesis error:", error);
+          outputBox.classList.remove("speaking");
+        }
+      });
+
+    });
+  </script>
+</body>
+</html>
