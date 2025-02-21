@@ -1,0 +1,161 @@
+/* Set overall background to beige */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8; /* Off white background */
+  }
+  
+  
+  /* Top header styling */
+  .app-header {
+    width: 100%;
+    background-color: #ccc; /* Gray shade */
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .app-header h1 {
+    margin: 0;
+    color: #333;
+  }
+  
+  /* Container styling */
+  .container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+  }
+  
+  .transcripts {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;           /* Space between boxes */
+    justify-content: space-between;
+    margin-top: 80px;     /* Push the boxes slightly down */
+    background-color: transparent; /* Ensure no background color shows between boxes */
+  }  
+  
+/* Modern styling for transcript container boxes */
+.transcript {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .transcript:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Modern styling for the text areas inside transcript boxes */
+  textarea {
+    width: 100%;
+    height: 120px;
+    resize: none;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fafafa;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  
+  textarea:focus {
+    outline: none;
+    border-color: #00aaff;
+    box-shadow: 0 0 8px rgba(0, 170, 255, 0.3);
+  }
+  
+  /* Futuristic styling for language selection dropdowns */
+.transcript label {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 5px;
+    display: block;
+  }
+  
+  .transcript select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+    background: linear-gradient(135deg, #ffffff, #f0f0f0);
+    border: 2px solid #00aaff;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 170, 255, 0.3);
+    transition: border-color 0.3s, box-shadow 0.3s;
+    appearance: none;
+    outline: none;
+  }
+  
+  .transcript select:focus {
+    border-color: #00ccff;
+    box-shadow: 0 0 12px rgba(0, 204, 255, 0.5);
+  }
+
+  /* Glowing effect for active boxes */
+.transcript.recording {
+    box-shadow: 0 0 15px rgba(0, 170, 255, 0.7);
+  }
+  
+  .transcript.speaking {
+    box-shadow: 0 0 15px rgba(0, 255, 127, 0.7);
+  }
+  
+  .highlight {
+    background-color: rgb(171, 245, 236);
+  }
+  
+  /* Textarea styling */
+  textarea {
+    width: 100%;
+    height: 100px;
+    resize: none;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Button styling */
+  button {
+    width: 90%;
+    padding: 10px 15px;
+    background-color: #d3d3d3; /* Light gray */
+    color: #fff;
+    border: none;
+    border-radius: 50px;      /* Oval shape */
+    cursor: pointer;
+    display: block;           /* Centers the button horizontally */
+    margin: 10px auto;        /* Centers and adds vertical spacing */
+    transition: transform 0.3s, background-color 0.3s;
+    position: relative;
+  }
+  
+  button:hover {
+    background-color: #a9a9a9; /* Dark gray on hover */
+    transform: scale(1.05);    /* Slightly larger on hover */
+  }
+  
+  .app-header {
+    width: 100%;
+    background: linear-gradient(135deg, #4b79a1, #283e51);
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  .app-header h1 {
+    margin: 0;
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    font-size: 2rem;
+  }
+  
