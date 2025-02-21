@@ -4,5 +4,5 @@ torch
 whisper
 soundfile
 transformers
-TTS
+coqui-tts
 pydantic
