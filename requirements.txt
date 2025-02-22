@@ -7,3 +7,4 @@ transformers
 coqui-tts
 pydantic
 SentencePiece
+python-multipart
