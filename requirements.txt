@@ -8,3 +8,4 @@ coqui-tts
 pydantic
 SentencePiece
 python-multipart
+git+https://github.com/openai/whisper.git
