@@ -6,3 +6,4 @@ soundfile
 transformers
 coqui-tts
 pydantic
+SentencePiece
