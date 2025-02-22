@@ -11,8 +11,8 @@ This application provides real-time transcription, translation, and text-to-spee
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/healthcare-translation-app.git
-cd healthcare-translation-app
+git clone https://github.com/SudaisAlam/HealthCare-Translation-Web_App.git
+cd HealthCare-Translation-Web_App
 ```
 
 ### 2. Create a Virtual Environment (Recommended)
